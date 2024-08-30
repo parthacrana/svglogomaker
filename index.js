@@ -1,6 +1,6 @@
 const filesystem = require('./node_modules/graceful-fs/graceful-fs')
 const inquirer = require("inquirer");
-const {Circle, Square, Triangle} = require("./lib/shape");
+const {Circle, Square, Triangle} = require("./lib/shapes");
 // Imports the graceful-fs, inquirer, Circle, Square, and Triangle modules.
 // Defines a Svg class that has a constructor with three methods for rendering and setting the text and shape elements in the SVG string.
 
@@ -23,27 +23,28 @@ class Svg{
     
 }
 
-// grabs user input for details about logo maker 
+// Defines array of 'questions' using the 'inquirer' library with the following questions.
+// Each question is an object that specifies the properties of TEXT, TEXT COLOR, SHAPE COLOR, and Pixel Image.
 const questions = [
     {
         type: "input",
         name: "text",
-        message: "TEXT: Enter up to 3 Characters:",
+        message: "TEXT: Enter up to (3) Characters:",
     },
     {
         type: "input",
         name: "text-color",
-        message: "Choose a color for your text:",
+        message: "TEXT COLOR: Enter a color keyword (OR a hexadecimal number):",
     },
     {
         type: "input",
         name: "shape",
-        message: "Choose a color for your shape:",
+        message: "SHAPE COLOR: Enter a color keyword (OR a hexadecimal number):",
     },
     {
         type: "list",
         name: "pixel-image",
-        message: "Choose a shape",
+        message: "Choose which Pixel Image you would like?",
         choices: ["Circle", "Square", "Triangle"],
     },
 ];
@@ -52,6 +53,9 @@ const questions = [
 function writeToFile(fileName, data) {
 	console.log("Writing [" + data + "] to file [" + fileName + "]")
     filesystem.writeFile(fileName, data, function (err) {
+        if (err) {
+            return console.log(err);
+        }
         console.log("Congratulations, you have Generated a logo.svg!");
     });
 }
@@ -110,9 +114,12 @@ async function init() {
 	svg.setShapeElement(user_shape);
 	svgString = svg.render();
 	
+	//Print shape to log
+	console.log("Displaying shape:\n\n" + svgString);
 	//document.getElementById("svg_image").innerHTML = svgString;
 
 	console.log("Shape generation complete!");
+	console.log("Writing shape to file...");
 	writeToFile(svg_file, svgString); 
 }
 init()
